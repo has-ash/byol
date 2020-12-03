@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Language Servers / IDEs / external deps
+.ccls-cache/
+ext_deps/
+build/
+
+
+

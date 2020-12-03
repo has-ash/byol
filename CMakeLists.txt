@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.8)
+
+project(byol VERSION 0.1.0 
+    LANGUAGES C CXX)
+
+
+# mpc library
+add_library(mpc ext_deps/mpc-0.9.0/mpc.c)
+
+# main
+add_executable(byol src/byol.cpp)
+
+# compiler options
+target_compile_features(byol PRIVATE cxx_std_17)
+target_compile_options(byol PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(byol PRIVATE mpc readline)
+target_include_directories(byol PRIVATE ext_deps/mpc-0.9.0/ signal )
