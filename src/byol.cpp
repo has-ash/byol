@@ -17,7 +17,7 @@ long eval_op(long x, char* op, long y){
 long eval(mpc_ast_t *t) {
     // if number then just return number
   if (std::strstr(t->tag, "number")) {
-    return std::atoi(t->contents);
+    return std::atol(t->contents);
   }
   // else return result of eval-ing subtree
 
