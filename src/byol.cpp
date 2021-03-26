@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstring>
 #include <iostream>
 
@@ -6,27 +7,47 @@ extern "C" {
 #include <editline/readline.h>
 }
 
-long eval_op(long x, char* op, long y){
-  if(std::strcmp(op, "+") == 0) {return x+y;}
-  if(std::strcmp(op, "*") == 0) {return x*y;}
-  if(std::strcmp(op, "-") == 0) {return x-y;}
-  if(std::strcmp(op, "/") == 0) {return x/y;}
+long eval_op(long x, char *op, long y) {
+  if (std::strcmp(op, "+") == 0) {
+    return x + y;
+  }
+  if (std::strcmp(op, "*") == 0) {
+    return x * y;
+  }
+  if (std::strcmp(op, "-") == 0) {
+    return x - y;
+  }
+  if (std::strcmp(op, "/") == 0) {
+    return x / y;
+  }
+  if (std::strcmp(op, "%") == 0) {
+    return x % y;
+  }
+  if (std::strcmp(op, "^") == 0) {
+    return std::pow(x, y); // implicit conversion happens here
+  }
+  if (std::strcmp(op, "min") == 0) {
+    return x < y ? x : y;
+  }
+  if (std::strcmp(op, "max") == 0) {
+    return x > y ? x : y;
+  }
   return 0;
 }
 
 long eval(mpc_ast_t *t) {
-    // if number then just return number
+  // if number then just return number
   if (std::strstr(t->tag, "number")) {
     return std::atol(t->contents);
   }
   // else return result of eval-ing subtree
 
   // first child is '('
-  char* op = t->children[1]->contents;
+  char *op = t->children[1]->contents;
   long x = eval(t->children[2]);
 
   int i = 3;
-  while(std::strstr(t->children[i]->tag, "expr")){
+  while (std::strstr(t->children[i]->tag, "expr")) {
     x = eval_op(x, op, eval(t->children[i]));
     i++;
   }
@@ -40,14 +61,15 @@ int main() {
   mpc_parser_t *Expr = mpc_new("expr");
   mpc_parser_t *Lispy = mpc_new("lispy");
 
-  mpca_lang(MPCA_LANG_DEFAULT,
-            "                                                             \
-        number      : /-?[0-9]+/;                                     \
-        operator    : '+' | '-' | '*' | '/';                          \
-        expr        : <number> | '(' <operator> <expr>+ ')';          \
-        lispy       : /^/ <operator> <expr>+ /$/ ;                    \
+  mpca_lang(
+      MPCA_LANG_DEFAULT,
+      "                                                                            \
+        number      : /-?[0-9]+/;                                                  \
+        operator    : '+' | '-' | '*' | '/' | '%' | '^' ;           \
+        expr        : <number> | '(' <operator> <expr>+ ')';                       \
+        lispy       : /^/ <operator> <expr>+ /$/ ;                                 \
         ",
-            Number, Operator, Expr, Lispy);
+      Number, Operator, Expr, Lispy);
 
   std::cout << "Mlisp Version 0.0.1\n";
   std::cout << "Type 'exit' to exit\n";
@@ -62,9 +84,9 @@ int main() {
 
     mpc_result_t r;
     if (mpc_parse("<stdin>", input.c_str(), Lispy, &r)) {
-      long result = eval(static_cast<mpc_ast_t *> (r.output));
+      long result = eval(static_cast<mpc_ast_t *>(r.output));
       std::cout << result << "\n";
-      //mpc_ast_print(static_cast<mpc_ast_t *>(r.output));
+      // mpc_ast_print(static_cast<mpc_ast_t *>(r.output));
       mpc_ast_delete(static_cast<mpc_ast_t *>(r.output));
     } else {
       mpc_err_print(r.error);
