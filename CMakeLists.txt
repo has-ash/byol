@@ -8,7 +8,7 @@ project(byol VERSION 0.1.0
 add_library(mpc ext_deps/mpc-0.9.0/mpc.c)
 
 # main
-add_executable(byol src/byol.cpp)
+add_executable(byol src/byol.cpp src/err.cpp src/eval.cpp)
 
 # LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
