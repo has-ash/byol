@@ -36,5 +36,8 @@
 ext_deps/
 build/
 
+compile_commands.json
+.cache/
+.vscode/
 
 
