@@ -17,7 +17,8 @@ using std::cout;
 int main() {
 
   mpc_parser_t *Number = mpc_new("number");
-  mpc_parser_t *Operator = mpc_new("operator");
+  mpc_parser_t *Symbol = mpc_new("symbol");
+  mpc_parser_t *Sexpr = mpc_new("sexpr");
   mpc_parser_t *Expr = mpc_new("expr");
   mpc_parser_t *Lispy = mpc_new("lispy");
 
@@ -25,11 +26,12 @@ int main() {
       MPCA_LANG_DEFAULT,
       "                                                                            \
         number      : /-?[0-9]+/;                                                  \
-        operator    : '+' | '-' | '*' | '/' | '%' | '^' ;                          \
-        expr        : <number> | '(' <operator> <expr>+ ')';                       \
-        lispy       : /^/ <operator> <expr>+ /$/ ;                                 \
+        symbol      : '+' | '-' | '*' | '/' | '%' | '^' ;                          \
+		sexpr       : '(' <expr>* ')'; 												\
+        expr        : <number> | <symbol> |  <sexpr>;                       		\
+        lispy       : /^/ <expr>* /$/ ;                                 			\
         ",
-      Number, Operator, Expr, Lispy);
+      Number, Symbol, Sexpr, Expr, Lispy);
 
   cout << "Mlisp Version 0.0.1\n";
   cout << "Type 'exit' to exit\n";
@@ -54,6 +56,6 @@ int main() {
     }
   }
 
-  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+  mpc_cleanup(5, Number, Symbol, Sexpr, Expr, Lispy);
   return 0;
 }
